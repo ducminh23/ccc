@@ -27,6 +27,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
+      - name: Cài thư viện
+        run: npm install
       - name: Chạy bot
         env:
           BOT_NAME: ${{ matrix.bot.name }}
