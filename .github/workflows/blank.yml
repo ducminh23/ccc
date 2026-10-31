@@ -1,32 +1,26 @@
 name: Run Node and Python
 
 on:
-  workflow_dispatch:        # bấm chạy tay
-  schedule:
-    - cron: "*/30 * * * *"  # chạy mỗi 30 phút (giờ UTC)
+  workflow_dispatch:
+    inputs:
+      param1:
+        description: "Tham số 1"
+        required: true
+      param2:
+        description: "Tham số 2"
+        required: false
 
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Cài thư viện
-        run: |
-          [ -f package.json ] && npm install || true
-          [ -f requirements.txt ] && pip install -r requirements.txt || true
-
       - name: Chạy Node.js
+        env:
+          PARAM1: ${{ inputs.param1 }}
+          PARAM2: ${{ inputs.param2 }}
         run: node app.js
-
-      - name: Chạy Python
-        run: python main.py
