@@ -1,0 +1,5 @@
+[
+  {"name": "bot1", "param1": "abc", "param2": "x"},
+  {"name": "bot2", "param1": "def", "param2": "y"},
+  {"name": "bot3", "param1": "ghi", "param2": "z"}
+]
