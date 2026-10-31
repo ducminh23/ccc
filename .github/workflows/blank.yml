@@ -1,26 +1,35 @@
-name: Run Node and Python
+name: Run all bots
 
 on:
   workflow_dispatch:
-    inputs:
-      param1:
-        description: "Tham số 1"
-        required: true
-      param2:
-        description: "Tham số 2"
-        required: false
 
 jobs:
+  load:
+    runs-on: ubuntu-latest
+    outputs:
+      bots: ${{ steps.set.outputs.bots }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: set
+        run: echo "bots=$(jq -c . bots.json)" >> "$GITHUB_OUTPUT"
+
   run:
+    needs: load
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        bot: ${{ fromJson(needs.load.outputs.bots) }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Chạy Node.js
+      - name: Chạy bot
         env:
-          PARAM1: ${{ inputs.param1 }}
-          PARAM2: ${{ inputs.param2 }}
+          BOT_NAME: ${{ matrix.bot.name }}
+          PARAM1: ${{ matrix.bot.param1 }}
+          PARAM2: ${{ matrix.bot.param2 }}
         run: node app.js
